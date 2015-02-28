@@ -2865,7 +2865,7 @@ net.brehaut.ClojureTools = (function (SH) {
     build_tree: build_tree
   };
 })(SyntaxHighlighter);
-</script><title>mvxcvi/puget -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name"><a href="https://github.com/greglook/puget">mvxcvi/puget</a></h1><h2 class="project-version">0.7.0</h2><br /><p>Colorizing canonical Clojure printer for EDN values.</p>
+</script><title>mvxcvi/puget -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name"><a href="https://github.com/greglook/puget">mvxcvi/puget</a></h1><h2 class="project-version">0.7.1</h2><br /><p>Colorizing canonical Clojure printer for EDN values.</p>
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/data.codec</td><td class="dotted"><hr /></td><td class="dep-version">0.1.0</td></tr><tr><td class="dep-name">fipp</td><td class="dotted"><hr /></td><td class="dep-version">0.5.2</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#puget.color">puget.color</a></li><li><a href="#puget.color.ansi">puget.color.ansi</a></li><li><a href="#puget.color.html">puget.color.html</a></li><li><a href="#puget.data">puget.data</a></li><li><a href="#puget.order">puget.order</a></li><li><a href="#puget.printer">puget.printer</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color" name="puget.color"><h1 class="project-name">puget.color</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace defines multimethods to add color markup to text.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns puget.color)</pre></td></tr><tr><td class="docs"><h2>Coloring Multimethods</h2>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Dispatches to coloring multimethods. Element should be a key from
@@ -2946,8 +2946,8 @@ net.brehaut.ClojureTools = (function (SH) {
   [element text options]
   (if-let [codes (-&gt; options :color-scheme (get element) seq)]
     (str (esc codes) text (escape :none))
-    text))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color.html" name="puget.color.html"><h1 class="project-name">puget.color.html</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace defines methods for the :html-inline
-  and :html-classes :color-markup options.</p>
+    text))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color.html" name="puget.color.html"><h1 class="project-name">puget.color.html</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace defines methods for the <code>:html-inline</code> and <code>:html-classes</code>
+  otptions for <code>:color-markup</code>.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns puget.color.html
   (:require
     [clojure.string :as str]
@@ -2994,11 +2994,11 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"><pre class="brush: clojure">(defn escape-html-document
   [text]
   (let [escaped-text (escape-html-text text)
-        spans (.split escaped-text &quot;(?=&amp;)&quot;)]
+        spans (str/split escaped-text #&quot;(?=&amp;)&quot;)]
     (reduce (fn [acc span]
               (case (first span)
                 nil acc
-                \&amp; (let [[escaped span] (.split span &quot;(?&lt;=;)&quot; 2)
+                \&amp; (let [[escaped span] (str/split span #&quot;(?&lt;=;)&quot; 2)
                          acc (conj acc [:escaped escaped])]
                      (if (seq span)
                        (conj acc span)
@@ -3211,6 +3211,11 @@ net.brehaut.ClojureTools = (function (SH) {
   The text placed between a map key and a collection value. The keyword :line
   will cause line breaks if the whole map does not fit on a single line.</p>
 
+<p>  <code>:print-fallback</code>
+  Takes a keyword argument specifying the desired string representation of
+  unknown documents. The keyword <code>:print</code> will fall back to using <code>pr-str</code>
+  rather than puget's default unknown-document representation. </p>
+
 <p>  <code>:print-meta</code>
   If true, metadata will be printed before values. If nil, defaults to the
   value of <em>print-meta</em>.</p>
@@ -3232,6 +3237,7 @@ net.brehaut.ClojureTools = (function (SH) {
    :strict false
    :map-delimiter &quot;,&quot;
    :map-coll-separator &quot; &quot;
+   :print-fallback nil
    :print-meta nil
    :print-color false
    :color-markup :ansi
@@ -3275,7 +3281,7 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Returns the system id for the object as a hex string.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn- system-id
   [obj]
-  (Integer/toHexString (System/identityHashCode obj)))</pre></td></tr><tr><td class="docs"><p>Throws an exception if strict mode is enabled. The error indincates that the
+  (Integer/toHexString (System/identityHashCode obj)))</pre></td></tr><tr><td class="docs"><p>Throws an exception if strict mode is enabled. The error indicates that the
   given value has no EDN representation.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn- illegal-when-strict!
   [value]
@@ -3332,14 +3338,16 @@ net.brehaut.ClojureTools = (function (SH) {
    (unknown-document value (.getName (class value)) repr))
   ([value tag repr]
    (illegal-when-strict! value)
-   [:span
-    (color-doc :class-delimiter &quot;#&lt;&quot;)
-    (color-doc :class-name tag)
-    (color-doc :class-delimiter &quot;@&quot;)
-    (system-id value)
-    &quot; &quot;
-    repr
-    (color-doc :class-delimiter &quot;&gt;&quot;)]))</pre></td></tr><tr><td class="docs"><h2>Primitive Types</h2>
+   (case (:print-fallback *options*)
+     :print [:span (pr-str value)]
+     [:span
+      (color-doc :class-delimiter &quot;#&lt;&quot;)
+      (color-doc :class-name tag)
+      (color-doc :class-delimiter &quot;@&quot;)
+      (system-id value)
+      &quot; &quot;
+      repr
+      (color-doc :class-delimiter &quot;&gt;&quot;)])))</pre></td></tr><tr><td class="docs"><h2>Primitive Types</h2>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Defines a canonization of a primitive value type by mapping it to an element
   in the color scheme.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro ^:private format-element
