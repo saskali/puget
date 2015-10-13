@@ -2865,13 +2865,31 @@ net.brehaut.ClojureTools = (function (SH) {
     build_tree: build_tree
   };
 })(SyntaxHighlighter);
-</script><title>mvxcvi/puget -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name"><a href="https://github.com/greglook/puget">mvxcvi/puget</a></h1><h2 class="project-version">0.8.1</h2><br /><p>Colorizing canonical Clojure printer for EDN values.</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">fipp</td><td class="dotted"><hr /></td><td class="dep-version">0.5.2</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#puget.color">puget.color</a></li><li><a href="#puget.color.ansi">puget.color.ansi</a></li><li><a href="#puget.color.html">puget.color.html</a></li><li><a href="#puget.data">puget.data</a></li><li><a href="#puget.order">puget.order</a></li><li><a href="#puget.printer">puget.printer</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color" name="puget.color"><h1 class="project-name">puget.color</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace defines multimethods to add color markup to text.</p>
+</script><title>mvxcvi/puget -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name"><a href="https://github.com/greglook/puget">mvxcvi/puget</a></h1><h2 class="project-version">0.9.0</h2><br /><p>Colorizing canonical Clojure printer for EDN values.</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">fipp</td><td class="dotted"><hr /></td><td class="dep-version">0.6.2</td></tr><tr><td class="dep-name">mvxcvi/arrangement</td><td class="dotted"><hr /></td><td class="dep-version">1.0.0</td></tr><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#puget.color">puget.color</a></li><li><a href="#puget.color.ansi">puget.color.ansi</a></li><li><a href="#puget.color.html">puget.color.html</a></li><li><a href="#puget.dispatch">puget.dispatch</a></li><li><a href="#puget.printer">puget.printer</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color" name="puget.color"><h1 class="project-name">puget.color</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Coloring multimethods to format text by adding markup.</p>
+
+<p>  #### Color Options</p>
+
+<p>  <code>:print-color</code></p>
+
+<p>  When true, ouptut colored text from print functions.</p>
+
+<p>  <code>:color-markup</code></p>
+
+<ul>
+<li><code>:ansi</code> for color terminal text (default)</li>
+<li><code>:html-inline</code> for inline-styled html</li>
+<li><p><code>:html-classes</code> for html with semantic classes</p>
+
+<p><code>:color-scheme</code></p>
+
+<p>Map of syntax element keywords to color codes.</p></li>
+</ul>
 </td><td class="codes"><pre class="brush: clojure">(ns puget.color)</pre></td></tr><tr><td class="docs"><h2>Coloring Multimethods</h2>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Dispatches to coloring multimethods. Element should be a key from
   the color-scheme map.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn dispatch
-  [element text options]
+  [options element text]
   (when (:print-color options)
     (:color-markup options)))</pre></td></tr><tr><td class="docs"><p>Constructs a pretty print document, which may be colored if
   <code>:print-color</code> is true.</p>
@@ -2886,11 +2904,14 @@ net.brehaut.ClojureTools = (function (SH) {
 text unaltered.</p>
 </td><td class="codes"></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod document nil
-  [element text options]
+  [options element text]
   text)</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod text nil
-  [element text options]
-  text)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color.ansi" name="puget.color.ansi"><h1 class="project-name">puget.color.ansi</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace defines functions to apply ANSI color codes to text.</p>
+  [options element text]
+  text)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color.ansi" name="puget.color.ansi"><h1 class="project-name">puget.color.ansi</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Coloring implementation that applies ANSI color codes to text designed to be
+  output to a terminal.</p>
+
+<p>  Use with a <code>:color-markup</code> of <code>:ansi</code>.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns puget.color.ansi
   (:require
     [clojure.string :as str]
@@ -2940,16 +2961,22 @@ text unaltered.</p>
   [string]
   (str/replace string #&quot;\u001b\[[0-9;]*[mK]&quot; &quot;&quot;))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod color/document :ansi
-  [element text options]
+  [options element text]
   (if-let [codes (-&gt; options :color-scheme (get element) seq)]
     [:span [:pass (esc codes)] text [:pass (escape :none)]]
     text))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod color/text :ansi
-  [element text options]
+  [options element text]
   (if-let [codes (-&gt; options :color-scheme (get element) seq)]
     (str (esc codes) text (escape :none))
-    text))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color.html" name="puget.color.html"><h1 class="project-name">puget.color.html</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace defines methods for the <code>:html-inline</code> and <code>:html-classes</code>
-  otptions for <code>:color-markup</code>.</p>
+    text))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color.html" name="puget.color.html"><h1 class="project-name">puget.color.html</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Coloring implementation that wraps text in HTML tags to apply color.</p>
+
+<p>  Supports the following modes for <code>:color-markup</code>:</p>
+
+<ul>
+<li><code>:html-inline</code> applies inline <code>style</code> attributes to the tags.</li>
+<li><code>:html-classes</code> adds semantic <code>class</code> attributes to the tags.</li>
+</ul>
 </td><td class="codes"><pre class="brush: clojure">(ns puget.color.html
   (:require
     [clojure.string :as str]
@@ -3009,146 +3036,99 @@ text unaltered.</p>
             [:span]
             spans)))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod color/document :html-inline
-  [element text options]
+  [options element text]
   (if-let [codes (-&gt; options :color-scheme (get element) seq)]
     [:span [:pass &quot;&lt;span &quot; (style codes) &quot;&gt;&quot;]
      (escape-html-document text)
      [:pass &quot;&lt;/span&gt;&quot;]]
     (escape-html-document text)))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod color/text :html-inline
-  [element text options]
+  [options element text]
   (if-let [codes (-&gt; options :color-scheme (get element) seq)]
     (str &quot;&lt;span &quot; (style codes) &quot;&gt;&quot; (escape-html-text text) &quot;&lt;/span&gt;&quot;)
     (escape-html-text text)))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod color/document :html-classes
-  [element text options]
+  [options element text]
   [:span [:pass &quot;&lt;span class=\&quot;&quot; (name element) &quot;\&quot;&gt;&quot;]
    (escape-html-document text)
    [:pass &quot;&lt;/span&gt;&quot;]])</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defmethod color/text :html-classes
-  [element text options]
-  (str &quot;&lt;span class=\&quot;&quot; (name element) &quot;\&quot;&gt;&quot; (escape-html-text text) &quot;&lt;/span&gt;&quot;))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.data" name="puget.data"><h1 class="project-name">puget.data</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Code to handle custom data represented as tagged EDN values.</p>
-</td><td class="codes"><pre class="brush: clojure">(ns puget.data
-  (:import
-    (java.net URI)
-    (java.util Date TimeZone UUID)))</pre></td></tr><tr><td class="docs"><p>Protocol for types which use extended notation for EDN representation.</p>
-</td><td class="codes"><pre class="brush: clojure">(defprotocol ExtendedNotation
-  (-&gt;edn
-    [value]
-    &quot;Converts the given value into a tagged value representation for EDN
-    serialization. Should return a value with a `:tag` and a `:form`.&quot;))</pre></td></tr><tr><td class="docs"><h2>Extension Functions</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Defines an EDN representation for a type <code>t</code>. The tag will be the symbol
-  given for <code>tag</code> and the literal form will be generated by applying <code>expr</code> to
-  the original value.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmacro extend-tagged-value
-  [t tag expr]
-  `(let [value-fn# ~expr]
-     (extend-type ~t
-       ExtendedNotation
-       (-&gt;edn
-         [this#]
-         (array-map :tag ~tag :form (value-fn# this#))))))</pre></td></tr><tr><td class="docs"><p>Defines an EDN representation for the given type by converting it to a
-  string form.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmacro extend-tagged-str
-  [t tag]
-  `(extend-tagged-value ~t ~tag str))</pre></td></tr><tr><td class="docs"><p>Defines an EDN representation for the given type by converting it to a
-  map form.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmacro extend-tagged-map
-  [t tag]
-  `(extend-tagged-value ~t ~tag
-     (comp (partial into {}) seq)))</pre></td></tr><tr><td class="docs"><h2>Standard EDN Types</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Produces an ISO-8601 formatted date-time string from the given Date.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- format-utc
-  [^Date date]
-  (-&gt; &quot;yyyy-MM-dd'T'HH:mm:ss.SSS-00:00&quot;
-      java.text.SimpleDateFormat.
-      (doto (.setTimeZone (TimeZone/getTimeZone &quot;GMT&quot;)))
-      (.format date)))</pre></td></tr><tr><td class="docs"><p><code>inst</code> tags a date-time instant represented as an ISO-8601 string.</p>
-</td><td class="codes"><pre class="brush: clojure">(extend-tagged-value Date 'inst format-utc)</pre></td></tr><tr><td class="docs"><p><code>uuid</code> tags a universally-unique identifier string.</p>
-</td><td class="codes"><pre class="brush: clojure">(extend-tagged-str UUID 'uuid)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.order" name="puget.order"><h1 class="project-name">puget.order</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>This namespace provides a total-ordering comparator for Clojure values.</p>
-</td><td class="codes"><pre class="brush: clojure">(ns puget.order)</pre></td></tr><tr><td class="docs"><p>Determines a numeric priority for the given value based on its general type:</p>
+  [options element text]
+  (str &quot;&lt;span class=\&quot;&quot; (name element) &quot;\&quot;&gt;&quot; (escape-html-text text) &quot;&lt;/span&gt;&quot;))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.dispatch" name="puget.dispatch"><h1 class="project-name">puget.dispatch</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Dispatch functions take a <code>Class</code> argument and return the looked-up value.
+  This provides similar functionality to Clojure's protocols, but operates over
+  locally-constructed logic rather than using a global dispatch table.</p>
 
-<ul>
-<li><code>nil</code></li>
-<li><code>false</code></li>
-<li><code>true</code></li>
-<li>numbers</li>
-<li>characters</li>
-<li>strings</li>
-<li>keywords</li>
-<li>symbols</li>
-<li>lists</li>
-<li>vectors</li>
-<li>sets</li>
-<li>maps</li>
-<li>all other types</li>
-</ul>
-</td><td class="codes"><pre class="brush: clojure">(defn- type-priority
-  [x]
-  (let [predicates [nil? false? true? number? char? string?
-                    keyword? symbol? list? vector? set? map?]
-        priority (-&gt;&gt; predicates
-                      (map vector (range))
-                      (some (fn [[i p]] (when (p x) i))))]
-    (or priority (count predicates))))</pre></td></tr><tr><td class="docs"><p>Compare sequences using the given comparator. If any element of the
-  sequences orders differently, it determines the ordering. Otherwise, if the
-  prefix matches, the longer sequence sorts later.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- compare-seqs
-  [order xs ys]
-  (or (first (remove zero? (map order xs ys)))
-      (- (count xs) (count ys))))</pre></td></tr><tr><td class="docs"><p>Comparator function that provides a total ordering of EDN values. Values of
-  different types sort in order of their types, per <code>type-priority</code>. <code>false</code>
-  is before <code>true</code>, numbers are ordered by magnitude regardless of type, and
-  characters, strings, keywords, and symbols are ordered lexically.</p>
-
-<p>  Sequential collections are sorted by comparing their elements one at a time.
-  If the sequences have equal leading elements, the longer one is ordered later.
-  Sets are compared by cardinality first, then elements in sorted order.
-  Finally, maps are compared by their entries in sorted order of their keys.</p>
-
-<p>  All other types are sorted by class name. If the class implements
-  <code>Comparable</code>, the instances of it are compared using <code>compare</code>. Otherwise, the
-  values are ordered by print representation.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn rank
-  [a b]
-  (if (= a b)
-    0
-    (let [pri-a (type-priority a)
-          pri-b (type-priority b)]
-      (cond
-        (&lt; pri-a pri-b) -1
-        (&gt; pri-a pri-b)  1
-        (some #(% a) #{number? char? string? keyword? symbol?})
-        (compare a b)
-        (map? a)
-        (compare-seqs rank
-          (sort-by first rank (seq a))
-          (sort-by first rank (seq b)))
-        (set? a)
-        (let [size-diff (- (count a) (count b))]
-          (if (zero? size-diff)
-            (compare-seqs rank a b)
-            size-diff))
-        (coll? a)
-        (compare-seqs rank a b)
-        :else
-        (let [class-diff (compare (.getName (class a))
-                                  (.getName (class b)))]
-          (if (zero? class-diff)
-            (if (instance? java.lang.Comparable a)
-              (compare a b)
-              (compare (pr-str a) (pr-str b)))
-            class-diff))))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.printer" name="puget.printer"><h1 class="project-name">puget.printer</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Functions for canonical colored printing of EDN values.</p>
-</td><td class="codes"><pre class="brush: clojure">(ns puget.printer
+<p>  A simple example is a map from classes to values, which can be used directly
+  as a lookup function.</p>
+</td><td class="codes"><pre class="brush: clojure">(ns puget.dispatch
   (:require
-    [clojure.string :as str]
-    [fipp.printer :as fipp]
-    (puget
-      [color :as color]
-      [data :as data]
-      [order :as order])
-    (puget.color ansi html)))</pre></td></tr><tr><td class="docs"><h2>Control Vars</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Printer control options.</p>
+    [clojure.string :as str]))</pre></td></tr><tr><td class="docs"><p>Builds a dispatcher which looks up a type by checking multiple dispatchers
+  in order until a matching entry is found.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn chained-lookup
+  ([a] a)
+  ([a b &amp; more]
+   (let [candidates (list* a b more)]
+     (fn lookup [t]
+       (some #(% t) candidates)))))</pre></td></tr><tr><td class="docs"><p>Builds a dispatcher which caches values returned for each type. This improves
+  performance when the underlying dispatcher may need to perform complex
+  lookup logic to determine the dispatched value.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn caching-lookup
+  [dispatch]
+  (let [cache (atom {})]
+    (fn lookup [t]
+      (let [memory @cache]
+        (if (contains? memory t)
+          (get memory t)
+          (let [v (dispatch t)]
+            (swap! cache assoc t v)
+            v))))))</pre></td></tr><tr><td class="docs"><p>Builds a dispatcher which looks up a type by checking the underlying lookup
+  using the type's <em>symbolic</em> name, rather than the class value itself. This is
+  useful for checking configuration that must be created in situations where the
+  classes themselves may not be loaded yet.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn symbolic-lookup
+  [dispatch]
+  (fn lookup [^Class t]
+    (dispatch (symbol (.getName t)))))</pre></td></tr><tr><td class="docs"><p>Returns the ancestry of the given class, starting with the class and
+  excluding the <code>java.lang.Object</code> base class.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn- lineage
+  [cls]
+  (take-while #(and (some? %) (not= Object %))
+              (iterate #(when (class? %) (.getSuperclass ^Class %)) cls)))</pre></td></tr><tr><td class="docs"><p>Resolves all of the interfaces implemented by a class, both direct (through
+  class ancestors) and indirect (through other interfaces).</p>
+</td><td class="codes"><pre class="brush: clojure">(defn- find-interfaces
+  [cls]
+  (let [get-interfaces (fn [^Class c] (.getInterfaces c))
+        direct-interfaces (mapcat get-interfaces (lineage cls))]
+    (loop [queue (vec direct-interfaces)
+           interfaces #{}]
+      (if (empty? queue)
+        interfaces
+        (let [^Class iface (first queue)
+              implemented (get-interfaces iface)]
+          (recur (into (rest queue)
+                       (remove interfaces implemented))
+                 (conj interfaces iface)))))))</pre></td></tr><tr><td class="docs"><p>Builds a dispatcher which looks up a type by looking up the type itself,
+  then attempting to look up its ancestor classes, implemented interfaces, and
+  finally <code>java.lang.Object</code>.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn inheritance-lookup
+  [dispatch]
+  (fn lookup [t]
+    (or
+      ; Look up base class and ancestors up to the base class.
+      (some dispatch (lineage t))
+      ; Look up interfaces and collect candidates.
+      (let [candidates (remove (comp nil? first)
+                               (map (juxt dispatch identity)
+                                    (find-interfaces t)))]
+        (case (count candidates)
+          0 nil
+          1 (ffirst candidates)
+          (throw (RuntimeException.
+                   (format &quot;%d candidates found for interfaces on dispatch type %s: %s&quot;
+                           (count candidates) t (str/join &quot;, &quot; (map second candidates)))))))
+      ; Look up Object base class.
+      (dispatch Object))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.printer" name="puget.printer"><h1 class="project-name">puget.printer</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Enhanced printing functions for rendering Clojure values. The following
+  options are available to control the printer:</p>
 
 <p>  #### General Rendering</p>
 
@@ -3158,10 +3138,10 @@ text unaltered.</p>
 
 <p>  <code>:print-meta</code></p>
 
-<p>  If true, metadata will be printed before values. If nil, defaults to the
-  value of <code>*print-meta*</code>.</p>
+<p>  If true, metadata will be printed before values. Defaults to the value of
+  <code>*print-meta*</code> if unset.</p>
 
-<p>  <code>:sort-keys</code></p>
+<p>  <code>:sort-mode</code></p>
 
 <p>  Print maps and sets with ordered keys. Defaults to true, which will sort all
   collections. If a number, counted collections will be sorted up to the set
@@ -3178,50 +3158,62 @@ text unaltered.</p>
 
 <p>  #### Type Handling</p>
 
+<p>  <code>:print-handlers</code></p>
+
+<p>  A lookup function which will return a rendering function for a given class
+  type. This will be tried before the built-in type logic. See the
+  <code>puget.dispatch</code> namespace for some helpful constructors. The returned
+  function should accept the current printer and the value to be rendered,
+  returning a format document.</p>
+
 <p>  <code>:print-fallback</code></p>
 
-<p>  Keyword argument specifying how to format unknown values. The keyword
-  <code>:print</code> will fall back to using <code>pr-str</code> rather than the default
-  pretty-printed representation.</p>
+<p>  Keyword argument specifying how to format unknown values. Puget supports a few
+  different options:</p>
 
-<p>  <code>:escape-types</code></p>
+<ul>
+<li><code>:pretty</code> renders values with the default colored representation.</li>
+<li><code>:print</code> defers to the standard print method by rendering unknown values
+using <code>pr-str</code>.</li>
+<li><code>:error</code> will throw an exception when types with no defined handler are
+encountered.</li>
+<li><p>A function value will be called with the current printer options and the
+unknown value and is expected to return a formatting document representing
+it.</p>
 
-<p>  A set of symbols naming classes which should <em>not</em> be pretty-printed. Instead,
-  they will be rendered as unknown values. This can be useful for types which
-  define their own <code>print-method</code>, are extremely large nested structures, or
-  which Puget otherwise has trouble rendering.</p>
+<h4>Color Options</h4>
 
-<p>  <code>:strict</code></p>
+<p><code>:print-color</code></p>
 
-<p>  If true, throw an exception if there is no canonical EDN representation for
-  a given value. This generally applies to any non-primitive value which does
-  not extend <code>ExtendedNotation</code> and is not a built-in collection.</p>
+<p>When true, ouptut colored text from print functions.</p>
 
-<p>  #### Color Options</p>
+<p><code>:color-markup</code></p>
 
-<p>  <code>:print-color</code></p>
+<p>:ansi for ANSI color text (the default),
+:html-inline for inline-styled html,
+:html-classes to use the names of the keys in the :color-scheme map
+as class names for spans so styling can be specified via CSS.</p>
 
-<p>  When true, ouptut colored text from print functions.</p>
+<p><code>:color-scheme</code></p>
 
-<p>  <code>:color-markup</code></p>
-
-<p>  :ansi for ANSI color text (the default),
-  :html-inline for inline-styled html,
-  :html-classes to use the names of the keys in the :color-scheme map
-  as class names for spans so styling can be specified via CSS.</p>
-
-<p>  <code>:color-scheme</code></p>
-
-<p>  Map of syntax element keywords to ANSI color codes.</p>
+<p>Map of syntax element keywords to color codes.</p></li>
+</ul>
+</td><td class="codes"><pre class="brush: clojure">(ns puget.printer
+  (:require
+    [arrangement.core :as order]
+    [clojure.string :as str]
+    [fipp.engine :as fe]
+    [fipp.visit :as fv]
+    [puget.dispatch :as dispatch]
+    [puget.color :as color]
+    (puget.color ansi html)))</pre></td></tr><tr><td class="docs"><h2>Control Vars</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Default options to use when constructing new printers.</p>
 </td><td class="codes"><pre class="brush: clojure">(def ^:dynamic *options*
   {:width 80
-   :sort-keys true
-   :strict false
+   :sort-mode true
    :map-delimiter &quot;,&quot;
    :map-coll-separator &quot; &quot;
-   :escape-types nil
-   :print-fallback nil
-   :print-meta nil
+   :print-fallback :pretty
    :print-color false
    :color-markup :ansi
    :color-scheme
@@ -3244,7 +3236,7 @@ text unaltered.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn merge-options
   [a b]
   (let [colors (merge (:color-scheme a) (:color-scheme b))]
-    (-&gt; a (merge b) (assoc :color-scheme colors))))</pre></td></tr><tr><td class="docs"><p>Executes the given expressions with a set of options merged into the current
+    (assoc (merge a b) :color-scheme colors)))</pre></td></tr><tr><td class="docs"><p>Executes the given expressions with a set of options merged into the current
   option map.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro with-options
   [opts &amp; body]
@@ -3253,228 +3245,345 @@ text unaltered.</p>
 </td><td class="codes"><pre class="brush: clojure">(defmacro with-color
   [&amp; body]
   `(with-options {:print-color true}
-     ~@body))</pre></td></tr><tr><td class="docs"><h2>Utility Functions</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Returns the system id for the object as a hex string.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- system-id
-  [obj]
-  (Integer/toHexString (System/identityHashCode obj)))</pre></td></tr><tr><td class="docs"><p>Throws an exception if strict mode is enabled. The error indicates that the
-  given value has no EDN representation.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- illegal-when-strict!
-  [value]
-  (when (:strict *options*)
-    (throw (IllegalArgumentException.
-             (str &quot;No canonical EDN representation for &quot; (class value) &quot;: &quot; value)))))</pre></td></tr><tr><td class="docs"><p>Takes a sequence of entries and checks the <code>:sort-keys</code> option to determine
-  whether to sort them. Returns an appropriately ordered sequence.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- order-collection
-  [value sort-fn]
-  (let [mode (:sort-keys *options*)]
-    (if (or (true? mode)
-            (and (number? mode)
-                 (counted? value)
-                 (&gt;= mode (count value))))
-      (sort-fn value)
-      (seq value))))</pre></td></tr><tr><td class="docs"><h2>Coloring Functions</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Constructs a text doc, which may be colored if <code>:print-color</code> is true.
-  Element should be a key from the color-scheme map.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- color-doc
-  [element text]
-  (color/document element text *options*))</pre></td></tr><tr><td class="docs"><p>Produces text colored according to the active color scheme. This is mostly
+     ~@body))</pre></td></tr><tr><td class="docs"><p>Produces text colored according to the active color scheme. This is mostly
   useful to clients which want to produce output which matches data printed by
   Puget, but which is not directly printed by the library. Note that this
   function still obeys the <code>:print-color</code> option.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn color-text
-  [element text]
-  (color/text element text *options*))</pre></td></tr><tr><td class="docs"><h2>Formatting Multimethod</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Dispatches the method to use for value formatting. Any types in the
-  <code>:escape-types</code> set use the default formatter; values which use extended
-  notation are rendered as tagged literals; others are dispatched on their
-  <code>type</code>.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- formatter-dispatch
-  [value]
-  (let [class-sym (some-&gt; value class .getName symbol)]
-    (cond
-      (contains? (:escape-types *options*) class-sym)
-        :default
-      (satisfies? data/ExtendedNotation value)
-        ::tagged-literal
-      :else (type value))))</pre></td></tr><tr><td class="docs"><p>Converts the given value into a 'canonical' structured document, suitable
-  for printing with fipp. This method also supports ANSI color escapes for
-  syntax highlighting if desired.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmulti format-doc
-  #'formatter-dispatch)</pre></td></tr><tr><td class="docs"><p>Constructs a complete canonical print document for the given value.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- canonical-document
-  [value]
-  (let [print-meta? (if (nil? (:print-meta *options*))
-                      *print-meta*
-                      (:print-meta *options*))]
-    (if-let [metadata (and print-meta? (meta value))]
-      [:align
-       [:span (color-doc :delimiter &quot;^&quot;) (format-doc metadata)]
-       :line (format-doc value)]
-      (format-doc value))))</pre></td></tr><tr><td class="docs"><p>Renders common syntax doc for an unknown representation of a value.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- unknown-document
-  ([value]
-   (unknown-document value (str value)))
-  ([value repr]
-   (unknown-document value (.getName (class value)) repr))
-  ([value tag repr]
-   (illegal-when-strict! value)
-   (case (:print-fallback *options*)
-     :print [:span (pr-str value)]
+  ([element text]
+   (color-text *options* element text))
+  ([options element text]
+   (color/text options element text)))</pre></td></tr><tr><td class="docs"><h2>Formatting Methods</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Takes a sequence of entries and checks the mode to determine whether to sort
+  them. Returns an appropriately ordered sequence.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn- order-collection
+  [mode value sort-fn]
+  (if (or (true? mode)
+          (and (number? mode)
+               (counted? value)
+               (&gt;= mode (count value))))
+    (sort-fn value)
+    (seq value)))</pre></td></tr><tr><td class="docs"><p>Renders common syntax doc for an unknown representation of a value.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn format-unknown
+  ([printer value]
+   (format-unknown printer value (str value)))
+  ([printer value repr]
+   (format-unknown printer value (.getName (class value)) repr))
+  ([printer value tag repr]
+   [:span
+    (color/document printer :class-delimiter &quot;#&lt;&quot;)
+    (color/document printer :class-name tag)
+    (color/document printer :class-delimiter &quot;@&quot;)
+    (Integer/toHexString (System/identityHashCode value))
+    &quot; &quot;
+    repr
+    (color/document printer :class-delimiter &quot;&gt;&quot;)]))</pre></td></tr><tr><td class="docs"><p>Formats a document without considering metadata.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn format-doc*
+  [printer value]
+  (let [lookup (:print-handlers printer)
+        handler (and lookup (lookup (class value)))]
+    (if handler
+      (handler printer value)
+      (fv/visit* printer value))))</pre></td></tr><tr><td class="docs"><p>Recursively renders a print document for the given value.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn format-doc
+  [printer value]
+  (if-let [metadata (meta value)]
+    (fv/visit-meta printer metadata value)
+    (format-doc* printer value)))</pre></td></tr><tr><td class="docs"><h2>Type Handlers</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Generates a handler function which renders a tagged-literal with the given
+  tag and a value produced by calling the function.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn tagged-handler
+  [tag value-fn]
+  (fn handler
+    [printer value]
+    (format-doc printer (tagged-literal tag (value-fn value)))))</pre></td></tr><tr><td class="docs"><p>Map of print handlers for Java types. This supports syntax for regular
+  expressions, dates, UUIDs, and futures.</p>
+</td><td class="codes"><pre class="brush: clojure">(def java-handlers
+  {java.util.regex.Pattern
+   (fn pattern-handler
+     [printer value]
      [:span
-      (color-doc :class-delimiter &quot;#&lt;&quot;)
-      (color-doc :class-name tag)
-      (color-doc :class-delimiter &quot;@&quot;)
-      (system-id value)
-      &quot; &quot;
-      repr
-      (color-doc :class-delimiter &quot;&gt;&quot;)])))</pre></td></tr><tr><td class="docs"><h2>Primitive Types</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Defines a canonization of a primitive value type by mapping it to an element
-  in the color scheme.</p>
-</td><td class="codes"><pre class="brush: clojure">(defmacro ^:private format-element
-  [dispatch element]
-  `(defmethod format-doc ~dispatch
-     [value#]
-     (color-doc ~element (pr-str value#))))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(format-element nil                  :nil)
-(format-element java.lang.Boolean    :boolean)
-(format-element java.lang.Number     :number)
-(format-element java.lang.Character  :character)
-(format-element java.lang.String     :string)
-(format-element clojure.lang.Keyword :keyword)
-(format-element clojure.lang.Symbol  :symbol)</pre></td></tr><tr><td class="docs"><h2>Collection Types</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Formats a canonical print document for a key-value entry in a map.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- format-entry
-  [[k v]]
-  [:span
-   (format-doc k)
-   (cond
-     (satisfies? data/ExtendedNotation v) &quot; &quot;
-     (coll? v) (:map-coll-separator *options*)
-     :else &quot; &quot;)
-   (format-doc v)])</pre></td></tr><tr><td class="docs"><p>Formats a canonical print document for a map value.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn- format-map
-  [value]
-  (let [ks (order-collection value (partial sort-by first order/rank))
-        entries (map format-entry ks)]
-    [:group
-     (color-doc :delimiter &quot;{&quot;)
-     [:align (interpose [:span (:map-delimiter *options*) :line] entries)]
-     (color-doc :delimiter &quot;}&quot;)]))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.ISeq
-  [value]
-  (let [elements (if (symbol? (first value))
-                   (cons (color-doc :function-symbol (str (first value)))
-                         (map format-doc (rest value)))
-                   (map format-doc value))]
-    [:group
-     (color-doc :delimiter &quot;(&quot;)
-     [:align (interpose :line elements)]
-     (color-doc :delimiter &quot;)&quot;)]))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.IPersistentVector
-  [value]
-  [:group
-   (color-doc :delimiter &quot;[&quot;)
-   [:align (interpose :line (map format-doc value))]
-   (color-doc :delimiter &quot;]&quot;)])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.IPersistentSet
-  [value]
-  (let [entries (order-collection value (partial sort order/rank))]
-    [:group
-     (color-doc :delimiter &quot;#{&quot;)
-     [:align (interpose :line (map format-doc entries))]
-     (color-doc :delimiter &quot;}&quot;)]))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.IPersistentMap
-  [value]
-  (format-map value))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.IRecord
-  [value]
-  (illegal-when-strict! value)
-  [:span
-   (color-doc :delimiter &quot;#&quot;)
-   (.getName (class value))
-   (format-map value)])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(prefer-method format-doc clojure.lang.IRecord clojure.lang.IPersistentMap)</pre></td></tr><tr><td class="docs"><h2>Clojure Types</h2>
+      (color/document printer :delimiter &quot;#&quot;)
+      (color/document printer :string (str \&quot; value \&quot;))])
+   java.util.concurrent.Future
+   (fn future-handler
+     [printer value]
+     (let [doc (if (future-done? value)
+                 (format-doc printer @value)
+                 (color/document printer :nil &quot;pending&quot;))]
+    (format-unknown printer value &quot;Future&quot; doc)))
+   java.util.Date
+   (tagged-handler 'inst
+     #(-&gt; &quot;yyyy-MM-dd'T'HH:mm:ss.SSS-00:00&quot;
+          java.text.SimpleDateFormat.
+          (doto (.setTimeZone (java.util.TimeZone/getTimeZone &quot;GMT&quot;)))
+          (.format ^java.util.Date %)))
+   java.util.UUID
+   (tagged-handler 'uuid str)})</pre></td></tr><tr><td class="docs"><p>Map of print handlers for Clojure types. This supports syntax for vars,
+  atoms, pending values, and delays.</p>
+</td><td class="codes"><pre class="brush: clojure">(def clojure-handlers
+  {clojure.lang.Var
+   (fn var-handler
+     [printer value]
+     [:span
+      (color/document printer :delimiter &quot;#'&quot;)
+      (color/document printer :symbol (subs (str value) 2))])
+   clojure.lang.Atom
+   (fn atom-handler
+     [printer value]
+     (format-unknown printer value &quot;Atom&quot; (format-doc printer @value)))
+   clojure.lang.IPending
+   (fn pending-handler
+     [printer value]
+     (let [doc (if (realized? value)
+                 (format-doc printer @value)
+                 (color/document printer :nil &quot;pending&quot;))]
+    (format-unknown printer value doc)))
+   clojure.lang.Delay
+   (fn delay-handler
+     [printer value]
+     (let [doc (if (realized? value)
+                 (format-doc printer @value)
+                 (color/document printer :nil &quot;pending&quot;))]
+       (format-unknown printer value &quot;Delay&quot; doc)))})</pre></td></tr><tr><td class="docs"><p>Print handler dispatch combining Java and Clojure handlers with inheritance
+  lookups. Provides a similar experience as the standard Clojure
+  pretty-printer.</p>
+</td><td class="codes"><pre class="brush: clojure">(def common-handlers
+  (dispatch/chained-lookup
+    (dispatch/inheritance-lookup java-handlers)
+    (dispatch/inheritance-lookup clojure-handlers)))</pre></td></tr><tr><td class="docs"><h2>Canonical Printer Implementation</h2>
 </td><td class="codes"></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc java.util.regex.Pattern
-  [value]
-  (illegal-when-strict! value)
-  [:span
-   (color-doc :delimiter &quot;#&quot;)
-   (color-doc :string (str \&quot; value \&quot;))])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.Var
-  [value]
-  (illegal-when-strict! value)
-  [:span
-   (color-doc :delimiter &quot;#'&quot;)
-   (color-doc :symbol (subs (str value) 2))])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.IDeref
-  [value]
-  (unknown-document value (format-doc @value)))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.Atom
-  [value]
-  (unknown-document value &quot;Atom&quot; (format-doc @value)))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.IPending
-  [value]
-  (let [doc (if (realized? value)
-              (format-doc @value)
-              (color-doc :nil &quot;pending&quot;))]
-    (unknown-document value doc)))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc clojure.lang.Delay
-  [value]
-  (let [doc (if (realized? value)
-              (format-doc @value)
-              (color-doc :nil &quot;pending&quot;))]
-    (unknown-document value &quot;Delay&quot; doc)))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc java.util.concurrent.Future
-  [value]
-  (let [doc (if (future-done? value)
-              (format-doc @value)
-              (color-doc :nil &quot;pending&quot;))]
-    (unknown-document value &quot;Future&quot; doc)))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(prefer-method format-doc clojure.lang.ISeq clojure.lang.IPending)
-(prefer-method format-doc clojure.lang.IPending clojure.lang.IDeref)
-(prefer-method format-doc java.util.concurrent.Future clojure.lang.IDeref)
-(prefer-method format-doc java.util.concurrent.Future clojure.lang.IPending)</pre></td></tr><tr><td class="docs"><h2>Special Types</h2>
+</td><td class="codes"><pre class="brush: clojure">(defrecord CanonicalPrinter
+  [print-handlers]
+  fv/IVisitor
+  ; Primitive Types
+  (visit-nil
+    [this]
+    &quot;nil&quot;)
+  (visit-boolean
+    [this value]
+    (str value))
+  (visit-number
+    [this value]
+    (pr-str value))
+  (visit-character
+    [this value]
+    (pr-str value))
+  (visit-string
+    [this value]
+    (pr-str value))
+  (visit-keyword
+    [this value]
+    (str value))
+  (visit-symbol
+    [this value]
+    (str value))
+  ; Collection Types
+  (visit-seq
+    [this value]
+    (let [entries (map (partial format-doc this) value)]
+      [:group &quot;(&quot; [:align (interpose &quot; &quot; entries)] &quot;)&quot;]))
+  (visit-vector
+    [this value]
+    (let [entries (map (partial format-doc this) value)]
+      [:group &quot;[&quot; [:align (interpose &quot; &quot; entries)] &quot;]&quot;]))
+  (visit-set
+    [this value]
+    (let [entries (map (partial format-doc this)
+                       (sort order/rank value))]
+      [:group &quot;#{&quot; [:align (interpose &quot; &quot; entries)] &quot;}&quot;]))
+  (visit-map
+    [this value]
+    (let [entries (map #(vector :span (format-doc this (key %))
+                                &quot; &quot;   (format-doc this (val %)))
+                       (sort-by first order/rank value))]
+      [:group &quot;{&quot; [:align (interpose &quot; &quot; entries)] &quot;}&quot;]))
+  ; Clojure Types
+  (visit-meta
+    [this metadata value]
+    ; Metadata is not printed for canonical rendering.
+    (format-doc* this value))
+  (visit-var
+    [this value]
+    ; Defer to unknown, cover with handler.
+    (fv/visit-unknown this value))
+  (visit-pattern
+    [this value]
+    ; Defer to unknown, cover with handler.
+    (fv/visit-unknown this value))
+  ; Special Types
+  (visit-tagged
+    [this value]
+    [:span (str &quot;#&quot; (:tag value)) &quot; &quot; (format-doc this (:form value))])
+  (visit-unknown
+    [this value]
+    (throw (IllegalArgumentException.
+             (str &quot;No defined representation for &quot; (class value) &quot;: &quot;
+                  (pr-str value))))))</pre></td></tr><tr><td class="docs"><p>Constructs a new canonical printer with the given handler dispatch.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn canonical-printer
+  ([]
+   (canonical-printer nil))
+  ([handlers]
+   (assoc (CanonicalPrinter. handlers)
+          :width 0)))</pre></td></tr><tr><td class="docs"><p>Remove automatic constructor functions.</p>
+</td><td class="codes"><pre class="brush: clojure">(ns-unmap *ns* '-&gt;CanonicalPrinter)
+(ns-unmap *ns* 'map-&gt;CanonicalPrinter)</pre></td></tr><tr><td class="docs"><h2>Pretty Printer Implementation</h2>
 </td><td class="codes"></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc ::tagged-literal
-  [value]
-  (let [{:keys [tag form]} (data/-&gt;edn value)]
-    [:span
-     (color-doc :tag (str \# tag))
-     (if (coll? form) :line &quot; &quot;)
-     (format-doc form)]))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defmethod format-doc :default
-  [value]
-  (unknown-document value))</pre></td></tr><tr><td class="docs"><h2>Printing Functions</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Pretty-prints a value to <em>out</em>. Options may be passed to override the
+</td><td class="codes"><pre class="brush: clojure">(defrecord PrettyPrinter
+  [sort-mode
+   map-delimiter
+   map-coll-separator
+   print-handlers
+   print-fallback
+   print-meta
+   print-color
+   color-markup
+   color-scheme]
+  fv/IVisitor
+  ; Primitive Types
+  (visit-nil
+    [this]
+    (color/document this :nil &quot;nil&quot;))
+  (visit-boolean
+    [this value]
+    (color/document this :boolean (str value)))
+  (visit-number
+    [this value]
+    (color/document this :number (pr-str value)))
+  (visit-character
+    [this value]
+    (color/document this :character (pr-str value)))
+  (visit-string
+    [this value]
+    (color/document this :string (pr-str value)))
+  (visit-keyword
+    [this value]
+    (color/document this :keyword (str value)))
+  (visit-symbol
+    [this value]
+    (color/document this :symbol (str value)))
+  ; Collection Types
+  (visit-seq
+    [this value]
+    (let [elements (if (symbol? (first value))
+                     (cons (color/document this :function-symbol (str (first value)))
+                           (map (partial format-doc this) (rest value)))
+                     (map (partial format-doc this) value))]
+      [:group
+       (color/document this :delimiter &quot;(&quot;)
+       [:align (interpose :line elements)]
+       (color/document this :delimiter &quot;)&quot;)]))
+  (visit-vector
+    [this value]
+    [:group
+     (color/document this :delimiter &quot;[&quot;)
+     [:align (interpose :line (map (partial format-doc this) value))]
+     (color/document this :delimiter &quot;]&quot;)])
+  (visit-set
+    [this value]
+    (let [entries (order-collection sort-mode value (partial sort order/rank))]
+      [:group
+       (color/document this :delimiter &quot;#{&quot;)
+       [:align (interpose :line (map (partial format-doc this) entries))]
+       (color/document this :delimiter &quot;}&quot;)]))
+  (visit-map
+    [this value]
+    (let [ks (order-collection sort-mode value (partial sort-by first order/rank))
+          entries (map (fn [[k v]]
+                         [:span
+                          (format-doc this k)
+                          (if (coll? v)
+                            map-coll-separator
+                            &quot; &quot;)
+                          (format-doc this v)])
+                       ks)]
+      [:group
+       (color/document this :delimiter &quot;{&quot;)
+       [:align (interpose [:span map-delimiter :line] entries)]
+       (color/document this :delimiter &quot;}&quot;)]))
+  ; Clojure Types
+  (visit-meta
+    [this metadata value]
+    (if print-meta
+      [:align
+       [:span (color/document this :delimiter &quot;^&quot;) (format-doc this metadata)]
+       :line (format-doc* this value)]
+      (format-doc* this value)))
+  (visit-var
+    [this value]
+    ; Defer to unknown, cover with handler.
+    (fv/visit-unknown this value))
+  (visit-pattern
+    [this value]
+    ; Defer to unknown, cover with handler.
+    (fv/visit-unknown this value))
+  ; Special Types
+  (visit-tagged
+    [this value]
+    (let [{:keys [tag form]} value]
+      [:span
+       (color/document this :tag (str &quot;#&quot; (:tag value)))
+       &quot; &quot;
+       (format-doc this (:form value))]))
+  (visit-unknown
+    [this value]
+    (case print-fallback
+      :pretty
+        (format-unknown this value)
+      :print
+        [:span (pr-str value)]
+      :error
+        (throw (IllegalArgumentException.
+                 (str &quot;No defined representation for &quot; (class value) &quot;: &quot;
+                      (pr-str value))))
+      (if (ifn? print-fallback)
+        (print-fallback this value)
+        (throw (IllegalStateException.
+                 (str &quot;Unsupported value for print-fallback: &quot;
+                      (pr-str print-fallback))))))))</pre></td></tr><tr><td class="docs"><p>Constructs a new printer from the given configuration.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn pretty-printer
+  [opts]
+  (-&gt;&gt; [{:print-meta *print-meta*
+         :print-handlers common-handlers}
+        *options*
+        opts]
+       (reduce merge-options)
+       (map-&gt;PrettyPrinter)))</pre></td></tr><tr><td class="docs"><p>Remove automatic constructor functions.</p>
+</td><td class="codes"><pre class="brush: clojure">(ns-unmap *ns* '-&gt;PrettyPrinter)
+(ns-unmap *ns* 'map-&gt;PrettyPrinter)</pre></td></tr><tr><td class="docs"><h2>Printing Functions</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Prints a value using the given printer.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn render-out
+  [printer value]
+  (binding [*print-meta* false]
+    (fe/pprint-document
+      (format-doc printer value)
+      {:width (:width printer)})))</pre></td></tr><tr><td class="docs"><p>Renders a value to a string using the given printer.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn render-str
+  [printer value]
+  (str/trim-newline
+    (with-out-str
+      (render-out printer value))))</pre></td></tr><tr><td class="docs"><p>Pretty-prints a value to <em>out</em>. Options may be passed to override the
   default <em>options</em> map.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn pprint
   ([value]
    (pprint value nil))
   ([value opts]
-   (with-options opts
-     (fipp/pprint-document
-       (canonical-document value)
-       {:width (:width *options*)}))))</pre></td></tr><tr><td class="docs"><p>Pretty-print a value to a string.</p>
+   (render-out (pretty-printer opts) value)))</pre></td></tr><tr><td class="docs"><p>Pretty-print a value to a string.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn pprint-str
   ([value]
    (pprint-str value nil))
   ([value opts]
-   (-&gt; value
-       (pprint opts)
-       with-out-str
-       str/trim-newline)))</pre></td></tr><tr><td class="docs"><p>Like pprint, but turns on colored output.</p>
+   (render-str (pretty-printer opts) value)))</pre></td></tr><tr><td class="docs"><p>Like pprint, but turns on colored output.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn cprint
   ([value]
    (cprint value nil))
   ([value opts]
-   (with-color (pprint value opts))))</pre></td></tr><tr><td class="docs"><p>Pretty-prints a value to a colored string.</p>
+   (pprint value (assoc opts :print-color true))))</pre></td></tr><tr><td class="docs"><p>Pretty-prints a value to a colored string.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn cprint-str
   ([value]
    (cprint-str value nil))
   ([value opts]
-   (with-color (pprint-str value opts))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_puget.color">puget.color</li><li class="floating-toc-li" id="floating-toc_puget.color.ansi">puget.color.ansi</li><li class="floating-toc-li" id="floating-toc_puget.color.html">puget.color.html</li><li class="floating-toc-li" id="floating-toc_puget.data">puget.data</li><li class="floating-toc-li" id="floating-toc_puget.order">puget.order</li><li class="floating-toc-li" id="floating-toc_puget.printer">puget.printer</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
+   (pprint-str value (assoc opts :print-color true))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_puget.color">puget.color</li><li class="floating-toc-li" id="floating-toc_puget.color.ansi">puget.color.ansi</li><li class="floating-toc-li" id="floating-toc_puget.color.html">puget.color.html</li><li class="floating-toc-li" id="floating-toc_puget.dispatch">puget.dispatch</li><li class="floating-toc-li" id="floating-toc_puget.printer">puget.printer</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
 SyntaxHighlighter.all();
 
 // hackity hack

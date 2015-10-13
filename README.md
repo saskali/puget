@@ -9,9 +9,9 @@ To set up a subdirectory with the documentation branch, use the following
 commands in a fresh repo:
 
 ```bash
-mkdir docs
-git clone $(git remote -v | head -1 | awk '{ print $2; }') docs
-cd docs
+mkdir doc
+git clone $(git remote -v | head -1 | awk '{ print $2; }') doc
+cd doc
 git symbolic-ref HEAD refs/heads/gh-pages
 rm .git/index
 git clean -fdx
