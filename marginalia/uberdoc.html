@@ -2865,7 +2865,7 @@ net.brehaut.ClojureTools = (function (SH) {
     build_tree: build_tree
   };
 })(SyntaxHighlighter);
-</script><title>mvxcvi/puget -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name"><a href="https://github.com/greglook/puget">mvxcvi/puget</a></h1><h2 class="project-version">0.9.1</h2><br /><p>Colorizing canonical Clojure printer for EDN values.</p>
+</script><title>mvxcvi/puget -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name"><a href="https://github.com/greglook/puget">mvxcvi/puget</a></h1><h2 class="project-version">0.9.2</h2><br /><p>Colorizing canonical Clojure printer for EDN values.</p>
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">fipp</td><td class="dotted"><hr /></td><td class="dep-version">0.6.2</td></tr><tr><td class="dep-name">mvxcvi/arrangement</td><td class="dotted"><hr /></td><td class="dep-version">1.0.0</td></tr><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.7.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#puget.color">puget.color</a></li><li><a href="#puget.color.ansi">puget.color.ansi</a></li><li><a href="#puget.color.html">puget.color.html</a></li><li><a href="#puget.dispatch">puget.dispatch</a></li><li><a href="#puget.printer">puget.printer</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#puget.color" name="puget.color"><h1 class="project-name">puget.color</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Coloring multimethods to format text by adding markup.</p>
 
 <p>  #### Color Options</p>
@@ -3287,14 +3287,15 @@ as class names for spans so styling can be specified via CSS.</p>
   ([printer value repr]
    (format-unknown printer value (.getName (class value)) repr))
   ([printer value tag repr]
-   [:span
-    (color/document printer :class-delimiter &quot;#&lt;&quot;)
-    (color/document printer :class-name tag)
-    (color/document printer :class-delimiter &quot;@&quot;)
-    (Integer/toHexString (System/identityHashCode value))
-    &quot; &quot;
-    repr
-    (color/document printer :class-delimiter &quot;&gt;&quot;)]))</pre></td></tr><tr><td class="docs"><p>Formats a document without considering metadata.</p>
+   (let [sys-id (Integer/toHexString (System/identityHashCode value))]
+     [:span
+      (color/document printer :class-delimiter &quot;#&lt;&quot;)
+      (color/document printer :class-name tag)
+      (color/document printer :class-delimiter &quot;@&quot;)
+      sys-id
+      (when (not= repr (str tag &quot;@&quot; sys-id))
+        (list &quot; &quot; repr))
+      (color/document printer :class-delimiter &quot;&gt;&quot;)])))</pre></td></tr><tr><td class="docs"><p>Formats a document without considering metadata.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn format-doc*
   [printer value]
   (let [lookup (:print-handlers printer)
@@ -3310,8 +3311,11 @@ as class names for spans so styling can be specified via CSS.</p>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Print handler which renders the value with <code>pr-str</code>.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn pr-handler
   [printer value]
-  (pr-str value))</pre></td></tr><tr><td class="docs"><p>Generates a handler function which renders a tagged-literal with the given
-  tag and a value produced by calling the function.</p>
+  (pr-str value))</pre></td></tr><tr><td class="docs"><p>Print handler which renders the value using the printer's unknown type logic.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn unknown-handler
+  [printer value]
+  (fv/visit-unknown printer value))</pre></td></tr><tr><td class="docs"><p>Generates a print handler function which renders a tagged-literal with the
+  given tag and a value produced by calling the function.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn tagged-handler
   [tag value-fn]
   (fn handler
@@ -3319,7 +3323,11 @@ as class names for spans so styling can be specified via CSS.</p>
     (format-doc printer (tagged-literal tag (value-fn value)))))</pre></td></tr><tr><td class="docs"><p>Map of print handlers for Java types. This supports syntax for regular
   expressions, dates, UUIDs, and futures.</p>
 </td><td class="codes"><pre class="brush: clojure">(def java-handlers
-  {java.util.regex.Pattern
+  {java.lang.Class
+   (fn class-handler
+     [printer value]
+     (format-unknown printer value &quot;Class&quot; (.getName ^Class value)))
+   java.util.regex.Pattern
    (fn pattern-handler
      [printer value]
      [:span
@@ -3331,7 +3339,7 @@ as class names for spans so styling can be specified via CSS.</p>
      (let [doc (if (future-done? value)
                  (format-doc printer @value)
                  (color/document printer :nil &quot;pending&quot;))]
-    (format-unknown printer value &quot;Future&quot; doc)))
+       (format-unknown printer value &quot;Future&quot; doc)))
    java.util.Date
    (tagged-handler 'inst
      #(-&gt; &quot;yyyy-MM-dd'T'HH:mm:ss.SSS-00:00&quot;
@@ -3370,7 +3378,13 @@ as class names for spans so styling can be specified via CSS.</p>
      (let [doc (if (realized? value)
                  (format-doc printer @value)
                  (color/document printer :nil &quot;pending&quot;))]
-    (format-unknown printer value doc)))})</pre></td></tr><tr><td class="docs"><p>Print handler dispatch combining Java and Clojure handlers with inheritance
+    (format-unknown printer value doc)))
+   clojure.lang.Fn
+   (fn fn-handler
+     [printer value]
+     (format-unknown printer value &quot;Fn&quot;
+                     (str/replace-first (.getName (class value))
+                                        &quot;$&quot; &quot;/&quot;)))})</pre></td></tr><tr><td class="docs"><p>Print handler dispatch combining Java and Clojure handlers with inheritance
   lookups. Provides a similar experience as the standard Clojure
   pretty-printer.</p>
 </td><td class="codes"><pre class="brush: clojure">(def common-handlers
@@ -3554,9 +3568,9 @@ as class names for spans so styling can be specified via CSS.</p>
   (visit-tagged
     [this value]
     (let [{:keys [tag form]} value]
-      [:span
+      [:group
        (color/document this :tag (str &quot;#&quot; (:tag value)))
-       &quot; &quot;
+       (if (coll? form) :line &quot; &quot;)
        (format-doc this (:form value))]))
   (visit-unknown
     [this value]
