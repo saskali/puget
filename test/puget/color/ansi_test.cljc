@@ -1,6 +1,7 @@
 (ns puget.color.ansi-test
   (:require
-    [clojure.test :refer :all]
+    #?(:clj [clojure.test :refer [are deftest is testing]]
+       :cljs [cljs.test :refer-macros [are deftest is testing]])
     [puget.color.ansi :as ansi]))
 
 

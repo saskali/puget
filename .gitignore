@@ -6,3 +6,6 @@ pom.xml
 pom.xml.asc
 *.jar
 *.class
+.shadow-cljs
+/node_modules/
+/out/

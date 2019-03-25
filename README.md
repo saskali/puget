@@ -146,6 +146,15 @@ Puget refers to the `:print-fallback` option, which must be one of:
 - A function which will be called with the printer and the unknown value to
   render, returning the formatted value.
 
+
+## Development
+
+    npx shadow-cljs server start
+
+Run the tests with:
+
+    npx shadow-cljs compile test
+
 ## License
 
 This is free and unencumbered software released into the public domain.

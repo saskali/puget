@@ -1,0 +1,10 @@
+{:source-paths ["src" "test"]
+ :dependencies [[mvxcvi/arrangement "1.2.0"]
+                [fipp "0.6.17"]]
+ :builds
+ {:test
+  {:target    :node-test
+   :output-to "out/node-tests.js"
+   :autorun   true}}
+ :nrepl
+ {:port 8202}}
