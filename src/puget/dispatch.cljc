@@ -62,24 +62,26 @@
   "Returns the ancestry of the given class, starting with the class and
   excluding the `java.lang.Object` base class."
   [cls]
-  (take-while #(and (some? %) (not= Object %))
-              (iterate #(when (class? %) (.getSuperclass ^Class %)) cls)))
+  #?(:clj (take-while #(and (some? %) (not= Object %))
+                      (iterate #(when (class? %) (.getSuperclass ^Class %)) cls))
+     :cljs [cls]))
 
 (defn- find-interfaces
   "Resolves all of the interfaces implemented by a class, both direct (through
   class ancestors) and indirect (through other interfaces)."
   [cls]
-  (let [get-interfaces (fn [^Class c] (.getInterfaces c))
-        direct-interfaces (mapcat get-interfaces (lineage cls))]
-    (loop [queue (vec direct-interfaces)
-           interfaces #{}]
-      (if (empty? queue)
-        interfaces
-        (let [^Class iface (first queue)
-              implemented (get-interfaces iface)]
-          (recur (into (rest queue)
-                       (remove interfaces implemented))
-                 (conj interfaces iface)))))))
+  #?(:clj (let [get-interfaces (fn [^Class c] (.getInterfaces c))
+                direct-interfaces (mapcat get-interfaces (lineage cls))]
+            (loop [queue (vec direct-interfaces)
+                   interfaces #{}]
+              (if (empty? queue)
+                interfaces
+                (let [^Class iface (first queue)
+                      implemented (get-interfaces iface)]
+                  (recur (into (rest queue)
+                               (remove interfaces implemented))
+                         (conj interfaces iface))))))
+     :cljs [cls]))
 
 (defn inheritance-lookup
   "Builds a dispatcher which looks up a type by looking up the type itself,

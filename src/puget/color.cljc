@@ -31,7 +31,7 @@
 (defmulti document
   "Constructs a pretty print document, which may be colored if
   `:print-color` is true."
-  #'dispatch)
+  dispatch)
 
 
 (defmulti text
@@ -39,7 +39,7 @@
   useful to clients which want to produce output which matches data printed by
   Puget, but which is not directly printed by the library. Note that this
   function still obeys the `:print-color` option."
-  #'dispatch)
+  dispatch)
 
 
 ;; ## Default Markup

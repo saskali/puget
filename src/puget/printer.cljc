@@ -196,14 +196,20 @@
                m)]))))
 
 
+(defn type-name [value]
+  #?(:clj (.getName (class value))
+     :cljs (.-name (type value))))
+
+
 (defn format-unknown
   "Renders common syntax doc for an unknown representation of a value."
   ([printer value]
    (format-unknown printer value (str value)))
   ([printer value repr]
-   (format-unknown printer value (.getName (class value)) repr))
+   (format-unknown printer value (type-name value) repr))
   ([printer value tag repr]
-   (let [sys-id (Integer/toHexString (System/identityHashCode value))]
+   (let [sys-id #?(:clj (Integer/toHexString (System/identityHashCode value))
+                   :cljs (str value))]
      [:span
       (color/document printer :class-delimiter "#<")
       (color/document printer :class-name tag)
@@ -218,7 +224,7 @@
   "Formats a document without considering metadata."
   [printer value]
   (let [lookup (:print-handlers printer)
-        handler (and lookup (lookup (class value)))]
+        handler (and lookup (lookup (type value)))]
     (if handler
       (handler printer value)
       (fv/visit* printer value))))
@@ -264,43 +270,46 @@
     (format-doc printer (tagged-literal tag (value-fn value)))))
 
 
-(def java-handlers
+(def platform-handlers
   "Map of print handlers for Java types. This supports syntax for regular
   expressions, dates, UUIDs, and futures."
-  {java.lang.Class
-   (fn class-handler
-     [printer value]
-     (format-unknown printer value "Class" (.getName ^Class value)))
+  #?(:clj {java.lang.Class
+           (fn class-handler
+             [printer value]
+             (format-unknown printer value "Class" (.getName ^Class value)))
 
-   java.util.concurrent.Future
-   (fn future-handler
-     [printer value]
-     (let [doc (if (future-done? value)
-                 (format-doc printer @value)
-                 (color/document printer :nil "pending"))]
-       (format-unknown printer value "Future" doc)))
+           java.util.concurrent.Future
+           (fn future-handler
+             [printer value]
+             (let [doc (if (future-done? value)
+                         (format-doc printer @value)
+                         (color/document printer :nil "pending"))]
+               (format-unknown printer value "Future" doc)))
 
-   java.util.Date
-   (tagged-handler
-     'inst
-     #(-> "yyyy-MM-dd'T'HH:mm:ss.SSS-00:00"
-          (java.text.SimpleDateFormat.)
-          (doto (.setTimeZone (java.util.TimeZone/getTimeZone "GMT")))
-          (.format ^java.util.Date %)))
+           java.util.Date
+           (tagged-handler
+             'inst
+             #(-> "yyyy-MM-dd'T'HH:mm:ss.SSS-00:00"
+                  (java.text.SimpleDateFormat.)
+                  (doto (.setTimeZone (java.util.TimeZone/getTimeZone "GMT")))
+                  (.format ^java.util.Date %)))
 
-   java.util.UUID
-   (tagged-handler 'uuid str)})
+           java.util.UUID
+           (tagged-handler 'uuid str)}
+     :cljs {}))
 
 
 (def clojure-handlers
   "Map of print handlers for 'primary' Clojure types. These should take
   precedence over the handlers in `clojure-interface-handlers`."
-  {clojure.lang.Atom
+  {#?(:clj clojure.lang.Atom
+      :cljs cljs.core/Atom)
    (fn atom-handler
      [printer value]
      (format-unknown printer value "Atom" (format-doc printer @value)))
 
-   clojure.lang.Delay
+   #?(:clj clojure.lang.Delay
+      :cljs cljs.core/Delay)
    (fn delay-handler
      [printer value]
      (let [doc (if (realized? value)
@@ -308,7 +317,8 @@
                  (color/document printer :nil "pending"))]
        (format-unknown printer value "Delay" doc)))
 
-   clojure.lang.ISeq
+   #?(:clj clojure.lang.ISeq
+      :cljs cljs.core/ISeq)
    (fn iseq-handler
      [printer value]
      (fv/visit-seq printer value))})
@@ -316,7 +326,8 @@
 
 (def clojure-interface-handlers
   "Fallback print handlers for other Clojure interfaces."
-  {clojure.lang.IPending
+  {#?(:clj clojure.lang.IPending
+      :cljs cljs.core.IPending)
    (fn pending-handler
      [printer value]
      (let [doc (if (realized? value)
@@ -324,10 +335,12 @@
                  (color/document printer :nil "pending"))]
        (format-unknown printer value doc)))
 
-   clojure.lang.Fn
+   #?(:clj clojure.lang.Fn
+      :cljs cljs.core.IFn)
+
    (fn fn-handler
      [printer value]
-     (let [doc (let [[vname & tail] (-> (.getName (class value))
+     (let [doc (let [[vname & tail] (-> type-name
                                         (str/replace-first "$" "/")
                                         (str/split #"\$"))]
                  (if (seq tail)
@@ -345,7 +358,7 @@
   lookups. Provides a similar experience as the standard Clojure
   pretty-printer."
   (dispatch/chained-lookup
-    (dispatch/inheritance-lookup java-handlers)
+    (dispatch/inheritance-lookup platform-handlers)
     (dispatch/inheritance-lookup clojure-handlers)
     (dispatch/inheritance-lookup clojure-interface-handlers)))
 
@@ -454,9 +467,9 @@
 
   (visit-unknown
     [this value]
-    (throw (IllegalArgumentException.
-             (str "No defined representation for " (class value) ": "
-                  (pr-str value))))))
+    (throw (ex-info (str "No defined representation for " (type value) ": "
+                         (pr-str value))
+                    {}))))
 
 
 (defn canonical-printer
@@ -469,7 +482,7 @@
 
 
 ; Remove automatic constructor function.
-(ns-unmap *ns* '->CanonicalPrinter)
+#?(:clj (ns-unmap *ns* '->CanonicalPrinter))
 
 
 
@@ -614,7 +627,7 @@
     [this value]
     (fv/visit-tagged
       this
-      (tagged-literal (symbol (.getName (class value)))
+      (tagged-literal (symbol (type-name value))
                       (into {} value))))
 
 
@@ -638,15 +651,15 @@
         [:span (pr-str value)]
 
       :error
-        (throw (IllegalArgumentException.
-                 (str "No defined representation for " (class value) ": "
-                      (pr-str value))))
+        (throw (ex-info (str "No defined representation for " (type value) ": "
+                             (pr-str value))
+                        {}))
 
       (if (ifn? print-fallback)
         (print-fallback this value)
-        (throw (IllegalStateException.
-                 (str "Unsupported value for print-fallback: "
-                      (pr-str print-fallback))))))))
+        (throw (ex-info (str "Unsupported value for print-fallback: "
+                             (pr-str print-fallback))
+                        {}))))))
 
 
 (defn pretty-printer
@@ -661,7 +674,7 @@
 
 
 ; Remove automatic constructor function.
-(ns-unmap *ns* '->PrettyPrinter)
+#?(:clj (ns-unmap *ns* '->PrettyPrinter))
 
 
 

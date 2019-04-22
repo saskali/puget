@@ -1,6 +1,7 @@
 (ns puget.color.html-test
   (:require
-    [clojure.test :refer :all]
+    #?(:clj [clojure.test :refer :all]
+       :cljs [cljs.test :refer-macros [are deftest is testing]])
     [puget.color.html :as html]
     [puget.printer :as printer]))
 
@@ -80,12 +81,12 @@
              test-data
              {:color-markup :html-inline
               :color-scheme test-color-scheme
-              :print-handlers printer/java-handlers})))
+              :print-handlers printer/platform-handlers})))
     (is (= classes-ref
            (printer/cprint-str
              test-data
              {:color-markup :html-classes
-              :print-handlers printer/java-handlers}))))
+              :print-handlers printer/platform-handlers}))))
   (testing "color-text"
     (testing "no color markup"
       (is (= ":inline>"
