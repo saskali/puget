@@ -22,7 +22,8 @@
      (when (empty? candidates)
        #?(:clj (throw (IllegalArgumentException.
                         "chained-lookup must be provided at least one dispatch function to try."))
-          :cljs (throw "chained-lookup must be provided at least one dispatch function to try.")))
+          :cljs (throw (js/Error.
+                         "chained-lookup must be provided at least one dispatch function to try."))))
      (if (= 1 (count candidates))
        (first candidates)
        (fn lookup
